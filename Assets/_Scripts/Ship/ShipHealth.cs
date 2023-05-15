@@ -1,29 +1,70 @@
+using System.Collections;
 using UnityEngine;
 
 public class ShipHealth : Subject, IDamageable
 {
-    [SerializeField] private int maxHealth;
-    private int currentHealth;
+    [SerializeField] private float maxHealth;
+    private float currentHealth;
+
+    private bool hasTakenDamage = true;
+    private bool canRepair = true;
+    [SerializeField] private float damageCooldown;
+    [SerializeField] private float damageCooldownTimer;
 
     private void Start()
     {
-        currentHealth = maxHealth;
-    }
-    
-    public void TakeDamage(int damage)
-    {
-        currentHealth -= damage;
+        currentHealth = maxHealth / 10;
+        damageCooldownTimer = damageCooldown;
     }
 
-    public int GetCurrentHealth()
+    private void Update()
     {
-        Debug.Log(currentHealth);
+        if(hasTakenDamage)
+        {
+            StopAllCoroutines();
+            //countdown from repair cooldown counter
+            damageCooldownTimer -= Time.deltaTime;
+        } else if(!hasTakenDamage && canRepair)
+        {
+            StartCoroutine(Repair());
+        }
+
+        if (damageCooldownTimer <= 0)
+        {
+            //reset cooldown counter
+            damageCooldownTimer = damageCooldown;
+            hasTakenDamage = false;
+            canRepair = true;
+        }
+    }
+
+
+    public void TakeDamage(float damage)
+    {
+        currentHealth -= damage;
+        hasTakenDamage = true;
+        damageCooldownTimer = damageCooldown;
+        NotifyObservers();
+    }
+
+    public float GetCurrentHealth()
+    {
         return currentHealth;
     }
 
-    public int GetMaximumHealth()
+    public float GetMaximumHealth()
     {
-        Debug.Log(maxHealth);
         return maxHealth;
+    }
+
+    public IEnumerator Repair()
+    {
+        canRepair = false;
+        while (currentHealth < maxHealth)
+        {
+            currentHealth += 1f;
+            NotifyObservers();
+            yield return new WaitForSeconds(0.1f);
+        }
     }
 }
