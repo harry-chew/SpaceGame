@@ -6,12 +6,12 @@ using UnityEngine;
 public class DisplayInventory : MonoBehaviour
 {
     [SerializeField] private ShipStorage shipStorage;
-    private void OnEnable()
+    private void Start()
     {
         shipStorage.OnStorageChanged += UpdateInventory;
     }
 
-    private void OnDisable()
+    private void OnDestroy()
     {
         shipStorage.OnStorageChanged -= UpdateInventory;
     }
