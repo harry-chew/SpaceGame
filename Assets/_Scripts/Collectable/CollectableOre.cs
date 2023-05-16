@@ -7,7 +7,7 @@ public class CollectableOre : MonoBehaviour, ICollectable
     {
         // Add oreValue to player's ore count
         Debug.Log("CollectableOre.Collect() called: " + oreValue + " ore added to player's ore count");
-        shipStorage.AddStorage(oreValue);
+        shipStorage.AddStorage(new OreItem("Iron", oreValue));
         Destroy(this.gameObject);
     }
 }

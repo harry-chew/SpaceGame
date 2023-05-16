@@ -1,30 +1,47 @@
+using System;
+using System.Collections.Generic;
+using UnityEngine;
+
 public class ShipStorage : Subject
 {
     public int maxStorage = 100;
     public int currentStorage = 0;
 
-    public void AddStorage(int amount)
+    [SerializeField] private List<InventoryItem> inventory = new List<InventoryItem>();
+
+    public Action<List<InventoryItem>> OnStorageChanged;
+
+    public void AddStorage(InventoryItem item)
     {
-        currentStorage += amount;
-        NotifyObservers();
+        Debug.Log("trying to add " + item.GetItemName());
+        if (currentStorage + item.GetItemAmount() <= maxStorage)
+        {
+            currentStorage += item.GetItemAmount();
+            inventory.Add(item);
+            NotifyObservers();
+            OnStorageChanged?.Invoke(inventory);
+            Debug.Log("added: " + item.GetItemName());
+        }
     }
 
-    public void RemoveStorage(int amount)
+    public void RemoveStorage(InventoryItem item)
     {
-        currentStorage -= amount;
+        currentStorage -= item.GetItemAmount();
+        inventory.Remove(item);
         NotifyObservers();
+        OnStorageChanged?.Invoke(inventory);
     }
 
-    public bool HasStorage(int amount)
+    public List<InventoryItem> GetInventory()
     {
-        return currentStorage >= amount;
+        return inventory;
     }
 
     public int GetStorage()
     {
         return currentStorage;
     }
-
+    
     public int GetMaxStorage()
     {
         return maxStorage;
