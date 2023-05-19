@@ -6,6 +6,7 @@ public class ShipStorage : Subject
 {
     public int maxStorage = 100;
     public int currentStorage = 0;
+    [SerializeField] private int inventorySlots = 10;
 
     [SerializeField] private List<InventoryItem> inventory = new List<InventoryItem>();
 
@@ -45,5 +46,10 @@ public class ShipStorage : Subject
     public int GetMaxStorage()
     {
         return maxStorage;
+    }
+
+    public int GetInventorySlots()
+    {
+        return inventorySlots;
     }
 }
